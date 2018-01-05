@@ -154,7 +154,10 @@ viewWordBlocks : List String -> Html Msg
 viewWordBlocks words =
     div
         [ style
-            [ ( "margin", "0 0 100px" ) ]
+            [ ( "margin", "0 0 50px" )
+            , ( "display", "flex" )
+            , ( "flex-wrap", "wrap" )
+            ]
         ]
         (List.map viewWordBlock words)
 
@@ -164,8 +167,7 @@ viewWordBlock word =
     span
         [ style
             [ ( "padding", "10px" )
-            , ( "margin", "0 10px" )
-            , ( "line-height", "50px" )
+            , ( "margin", "10px" )
             , ( "background", "white" )
             ]
         ]
