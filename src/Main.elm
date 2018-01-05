@@ -97,25 +97,18 @@ view model =
                 div []
                     [ viewLines
                     , viewSelectedWordBlocks
-                        (List.map .text question.words
-                            |> takeIndexes model.selectedIndexes
+                        (List.filterMap
+                            (\index ->
+                                List.drop index question.words
+                                    |> List.head
+                                    |> Maybe.map .text
+                            )
+                            model.selectedIndexes
                         )
                     , viewWordBlocks model.selectedIndexes (List.map .text question.words)
                     ]
         , viewButton ((not << List.isEmpty) model.selectedIndexes)
         ]
-
-
-takeIndexes : List Int -> List a -> List a
-takeIndexes indexes list =
-    List.filterMap
-        (\( index, x ) ->
-            if List.member index indexes then
-                Just x
-            else
-                Nothing
-        )
-        (List.indexedMap (,) list)
 
 
 viewProgressBar : Html Msg
