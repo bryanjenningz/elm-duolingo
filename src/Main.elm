@@ -174,6 +174,7 @@ viewWord word =
             [ ( "border-bottom", "1px dashed #aaa" )
             , ( "padding", "5px 0" )
             , ( "margin", "0 5px" )
+            , ( "cursor", "pointer" )
             ]
         ]
         [ text word ]
@@ -214,6 +215,7 @@ viewSelectedWordBlock index word =
             [ ( "padding", "10px" )
             , ( "margin", "5px 10px" )
             , ( "background", "white" )
+            , ( "cursor", "pointer" )
             ]
         , onClick (UnselectBlock index)
         ]
@@ -250,6 +252,7 @@ viewWordBlock isSelected index word =
                 , ( "margin", "5px 10px" )
                 , ( "background", "#ddd" )
                 , ( "color", "#ddd" )
+                , ( "cursor", "default" )
                 ]
             ]
             [ text word ]
@@ -257,8 +260,9 @@ viewWordBlock isSelected index word =
         span
             [ style
                 [ ( "padding", "10px" )
-                , ( "margin", "10px" )
+                , ( "margin", "5px 10px" )
                 , ( "background", "white" )
+                , ( "cursor", "pointer" )
                 ]
             , onClick (SelectBlock index)
             ]
