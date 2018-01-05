@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 
 ---- MODEL ----
@@ -30,12 +31,14 @@ type alias Flags =
 
 
 type alias Model =
-    { blockQuestions : List BlockQuestion }
+    { blockQuestions : List BlockQuestion
+    , selectedIndexes : List Int
+    }
 
 
 init : Flags -> ( Model, Cmd Msg )
 init { blockQuestions } =
-    ( { blockQuestions = blockQuestions }, Cmd.none )
+    ( { blockQuestions = blockQuestions, selectedIndexes = [] }, Cmd.none )
 
 
 
@@ -44,11 +47,26 @@ init { blockQuestions } =
 
 type Msg
     = NoOp
+    | SelectBlock Int
+    | UnselectBlock Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        SelectBlock index ->
+            ( { model | selectedIndexes = model.selectedIndexes ++ [ index ] }, Cmd.none )
+
+        UnselectBlock index ->
+            let
+                newSelectedIndexes =
+                    List.take index model.selectedIndexes
+                        ++ List.drop (index + 1) model.selectedIndexes
+            in
+            ( { model | selectedIndexes = newSelectedIndexes }, Cmd.none )
 
 
 
@@ -77,7 +95,7 @@ view model =
                 div [] [ text "Make sure there's at least 1 question..." ]
 
             Just question ->
-                viewWordBlocks (List.map .text question.words)
+                viewWordBlocks model.selectedIndexes (List.map .text question.words)
         , viewButton
         ]
 
@@ -150,8 +168,8 @@ viewLines =
         )
 
 
-viewWordBlocks : List String -> Html Msg
-viewWordBlocks words =
+viewWordBlocks : List Int -> List String -> Html Msg
+viewWordBlocks selectedBlocks words =
     div
         [ style
             [ ( "margin", "0 0 50px" )
@@ -159,19 +177,40 @@ viewWordBlocks words =
             , ( "flex-wrap", "wrap" )
             ]
         ]
-        (List.map viewWordBlock words)
+        (List.indexedMap
+            (\index word ->
+                let
+                    isSelected =
+                        List.member index selectedBlocks
+                in
+                viewWordBlock isSelected index word
+            )
+            words
+        )
 
 
-viewWordBlock : String -> Html Msg
-viewWordBlock word =
-    span
-        [ style
-            [ ( "padding", "10px" )
-            , ( "margin", "10px" )
-            , ( "background", "white" )
+viewWordBlock : Bool -> Int -> String -> Html Msg
+viewWordBlock isSelected index word =
+    if isSelected then
+        span
+            [ style
+                [ ( "padding", "10px" )
+                , ( "margin", "10px" )
+                , ( "background", "#ddd" )
+                , ( "color", "#ddd" )
+                ]
             ]
-        ]
-        [ text word ]
+            [ text word ]
+    else
+        span
+            [ style
+                [ ( "padding", "10px" )
+                , ( "margin", "10px" )
+                , ( "background", "white" )
+                ]
+            , onClick (SelectBlock index)
+            ]
+            [ text word ]
 
 
 viewButton : Html Msg
