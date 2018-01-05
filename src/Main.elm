@@ -154,7 +154,7 @@ viewWordBlocks : List String -> Html Msg
 viewWordBlocks words =
     div
         [ style
-            [ ( "margin", "0 0 20px" ) ]
+            [ ( "margin", "0 0 100px" ) ]
         ]
         (List.map viewWordBlock words)
 
