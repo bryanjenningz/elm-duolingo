@@ -57,6 +57,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    let
+        maybeQuestion =
+            List.head model.blockQuestions
+    in
     div
         [ style
             [ ( "max-width", "500px" )
@@ -68,6 +72,12 @@ view model =
         , h1 [] [ text "Translate this sentence" ]
         , viewSentence
         , viewLines
+        , case maybeQuestion of
+            Nothing ->
+                div [] [ text "Make sure there's at least 1 question..." ]
+
+            Just question ->
+                viewWordBlocks (List.map .text question.words)
         , viewButton
         ]
 
@@ -138,6 +148,28 @@ viewLines =
                 []
             )
         )
+
+
+viewWordBlocks : List String -> Html Msg
+viewWordBlocks words =
+    div
+        [ style
+            [ ( "margin", "0 0 20px" ) ]
+        ]
+        (List.map viewWordBlock words)
+
+
+viewWordBlock : String -> Html Msg
+viewWordBlock word =
+    span
+        [ style
+            [ ( "padding", "10px" )
+            , ( "margin", "0 10px" )
+            , ( "line-height", "50px" )
+            , ( "background", "white" )
+            ]
+        ]
+        [ text word ]
 
 
 viewButton : Html Msg
