@@ -7,13 +7,35 @@ import Html.Attributes exposing (..)
 ---- MODEL ----
 
 
+type alias TextTranslation =
+    { text : String
+    , translations : List String
+    }
+
+
+type alias TextSound =
+    { text : String
+    , sound : String
+    }
+
+
+type alias BlockQuestion =
+    { sentence : List TextTranslation
+    , words : List TextSound
+    }
+
+
+type alias Flags =
+    { blockQuestions : List BlockQuestion }
+
+
 type alias Model =
-    {}
+    { blockQuestions : List BlockQuestion }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+init : Flags -> ( Model, Cmd Msg )
+init { blockQuestions } =
+    ( { blockQuestions = blockQuestions }, Cmd.none )
 
 
 
@@ -118,9 +140,9 @@ viewButton =
 ---- PROGRAM ----
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    Html.program
+    Html.programWithFlags
         { view = view
         , init = init
         , update = update
