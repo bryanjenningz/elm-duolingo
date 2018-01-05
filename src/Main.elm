@@ -84,6 +84,7 @@ view model =
             [ ( "max-width", "500px" )
             , ( "margin", "0 auto" )
             , ( "padding", "1em" )
+            , ( "height", "95vh" )
             ]
         ]
         [ viewProgressBar
@@ -94,17 +95,33 @@ view model =
                 div [] [ text "Make sure there's at least 1 question..." ]
 
             Just question ->
-                div []
-                    [ viewLines
-                    , viewSelectedWordBlocks
-                        (List.filterMap
-                            (\index ->
-                                List.drop index question.words
-                                    |> List.head
-                                    |> Maybe.map .text
+                div
+                    [ style
+                        [ ( "display", "flex" )
+                        , ( "flex-direction", "column" )
+                        , ( "height", "60%" )
+                        ]
+                    ]
+                    [ div [ style [ ( "height", "50%" ), ( "position", "relative" ) ] ]
+                        [ div
+                            [ style
+                                [ ( "position", "absolute" )
+                                , ( "width", "100%" )
+                                , ( "height", "100%" )
+                                , ( "z-index", "-1" )
+                                ]
+                            ]
+                            [ viewLines ]
+                        , viewSelectedWordBlocks
+                            (List.filterMap
+                                (\index ->
+                                    List.drop index question.words
+                                        |> List.head
+                                        |> Maybe.map .text
+                                )
+                                model.selectedIndexes
                             )
-                            model.selectedIndexes
-                        )
+                        ]
                     , viewWordBlocks model.selectedIndexes (List.map .text question.words)
                     ]
         , viewButton ((not << List.isEmpty) model.selectedIndexes)
@@ -171,7 +188,7 @@ viewLines =
                     [ ( "width", "100%" )
                     , ( "height", "1px" )
                     , ( "background", "#ccc" )
-                    , ( "margin", "40px 0" )
+                    , ( "margin", "50px 0" )
                     ]
                 ]
                 []
@@ -195,7 +212,7 @@ viewSelectedWordBlock index word =
     span
         [ style
             [ ( "padding", "10px" )
-            , ( "margin", "10px" )
+            , ( "margin", "5px 10px" )
             , ( "background", "white" )
             ]
         , onClick (UnselectBlock index)
@@ -230,7 +247,7 @@ viewWordBlock isSelected index word =
         span
             [ style
                 [ ( "padding", "10px" )
-                , ( "margin", "10px" )
+                , ( "margin", "5px 10px" )
                 , ( "background", "#ddd" )
                 , ( "color", "#ddd" )
                 ]
