@@ -45,6 +45,7 @@ view model =
         [ viewProgressBar
         , h1 [] [ text "Translate this sentence" ]
         , viewSentence
+        , viewButton
         ]
 
 
@@ -84,7 +85,7 @@ sentence =
 
 viewSentence : Html Msg
 viewSentence =
-    div [] (List.map viewWord sentence)
+    div [ style [ ( "margin", "15px" ) ] ] (List.map viewWord sentence)
 
 
 viewWord : String -> Html Msg
@@ -92,12 +93,25 @@ viewWord word =
     span
         [ style
             [ ( "border-bottom", "1px dashed #aaa" )
-            , ( "margin", "0px 5px" )
             , ( "padding", "5px 0" )
             , ( "margin", "0 5px" )
             ]
         ]
         [ text word ]
+
+
+viewButton : Html Msg
+viewButton =
+    div
+        [ style
+            [ ( "font-size", "20px" )
+            , ( "color", "#777" )
+            , ( "background", "#ccc" )
+            , ( "padding", "15px" )
+            , ( "border-radius", "100px" )
+            ]
+        ]
+        [ text "CHECK" ]
 
 
 
