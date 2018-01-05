@@ -96,7 +96,7 @@ view model =
 
             Just question ->
                 viewWordBlocks model.selectedIndexes (List.map .text question.words)
-        , viewButton
+        , viewButton ((not << List.isEmpty) model.selectedIndexes)
         ]
 
 
@@ -213,13 +213,19 @@ viewWordBlock isSelected index word =
             [ text word ]
 
 
-viewButton : Html Msg
-viewButton =
+viewButton : Bool -> Html Msg
+viewButton isActive =
     div
         [ style
             [ ( "font-size", "20px" )
-            , ( "color", "#777" )
-            , ( "background", "#ccc" )
+            , if isActive then
+                ( "color", "white" )
+              else
+                ( "color", "#777" )
+            , if isActive then
+                ( "background", "#00d800" )
+              else
+                ( "background", "#ccc" )
             , ( "padding", "15px" )
             , ( "border-radius", "100px" )
             ]
