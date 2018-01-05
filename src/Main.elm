@@ -89,15 +89,33 @@ view model =
         [ viewProgressBar
         , h1 [] [ text "Translate this sentence" ]
         , viewSentence
-        , viewLines
         , case maybeQuestion of
             Nothing ->
                 div [] [ text "Make sure there's at least 1 question..." ]
 
             Just question ->
-                viewWordBlocks model.selectedIndexes (List.map .text question.words)
+                div []
+                    [ viewLines
+                    , viewSelectedWordBlocks
+                        (List.map .text question.words
+                            |> takeIndexes model.selectedIndexes
+                        )
+                    , viewWordBlocks model.selectedIndexes (List.map .text question.words)
+                    ]
         , viewButton ((not << List.isEmpty) model.selectedIndexes)
         ]
+
+
+takeIndexes : List Int -> List a -> List a
+takeIndexes indexes list =
+    List.filterMap
+        (\( index, x ) ->
+            if List.member index indexes then
+                Just x
+            else
+                Nothing
+        )
+        (List.indexedMap (,) list)
 
 
 viewProgressBar : Html Msg
@@ -166,6 +184,30 @@ viewLines =
                 []
             )
         )
+
+
+viewSelectedWordBlocks : List String -> Html Msg
+viewSelectedWordBlocks words =
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "flex-wrap", "wrap" )
+            ]
+        ]
+        (List.indexedMap viewSelectedWordBlock words)
+
+
+viewSelectedWordBlock : Int -> String -> Html Msg
+viewSelectedWordBlock index word =
+    span
+        [ style
+            [ ( "padding", "10px" )
+            , ( "margin", "10px" )
+            , ( "background", "white" )
+            ]
+        , onClick (UnselectBlock index)
+        ]
+        [ text word ]
 
 
 viewWordBlocks : List Int -> List String -> Html Msg
