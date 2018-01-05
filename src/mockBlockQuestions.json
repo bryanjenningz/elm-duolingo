@@ -1,0 +1,62 @@
+[
+  {
+    "sentence": [
+      {
+        "text": "I",
+        "translations": [
+          "わたし",
+          "私"
+        ]
+      },
+      {
+        "text": "stuck on a stamp",
+        "translations": [
+          "切手を貼りました",
+          "きってをはりました"
+        ]
+      }
+    ],
+    "words": [
+      {
+        "text": "を",
+        "sound": "wo.mp3"
+      },
+      {
+        "text": "はって",
+        "sound": "hatte.mp3"
+      },
+      {
+        "text": "なくし",
+        "sound": "nakushi.mp3"
+      },
+      {
+        "text": "きっ",
+        "sound": "ki.mp3"
+      },
+      {
+        "text": "きって",
+        "sound": "kitte.mp3"
+      },
+      {
+        "text": "カギ",
+        "sound": "kagi.mp3"
+      },
+      {
+        "text": "た",
+        "sound": "ta.mp3"
+      },
+      {
+        "text": "はり",
+        "sound": "hari.mp3"
+      },
+      {
+        "text": "て",
+        "sound": "te.mp3"
+      },
+      {
+        "text": "まし",
+        "sound": "mashi.mp3"
+      }
+    ]
+  }
+]
