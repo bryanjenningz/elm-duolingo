@@ -67,6 +67,7 @@ view model =
         [ viewProgressBar
         , h1 [] [ text "Translate this sentence" ]
         , viewSentence
+        , viewLines
         , viewButton
         ]
 
@@ -120,6 +121,23 @@ viewWord word =
             ]
         ]
         [ text word ]
+
+
+viewLines : Html Msg
+viewLines =
+    div []
+        (List.repeat 3
+            (div
+                [ style
+                    [ ( "width", "100%" )
+                    , ( "height", "1px" )
+                    , ( "background", "#ccc" )
+                    , ( "margin", "40px 0" )
+                    ]
+                ]
+                []
+            )
+        )
 
 
 viewButton : Html Msg
