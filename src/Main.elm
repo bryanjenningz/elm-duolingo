@@ -35,7 +35,13 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ style [ ( "max-width", "500px" ), ( "margin", "0 auto" ), ( "padding", "1em" ) ] ]
+    div
+        [ style
+            [ ( "max-width", "500px" )
+            , ( "margin", "0 auto" )
+            , ( "padding", "1em" )
+            ]
+        ]
         [ viewProgressBar
         , h1 [] [ text "Translate this sentence" ]
         ]
