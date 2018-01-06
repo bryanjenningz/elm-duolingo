@@ -129,6 +129,7 @@ view model =
             , ( "margin", "0 auto" )
             , ( "padding", "1em" )
             , ( "height", "95vh" )
+            , ( "position", "relative" )
             ]
         ]
         [ viewProgressBar
