@@ -44,6 +44,7 @@ type alias Model =
     , nextQuestions : List BlockQuestion
     , selectedIndexes : List Int
     , answer : Answer
+    , correctCount : Int
     }
 
 
@@ -53,6 +54,7 @@ init { question, nextQuestions } =
       , nextQuestions = nextQuestions
       , selectedIndexes = []
       , answer = Unanswered
+      , correctCount = 1
       }
     , Cmd.none
     )
@@ -109,12 +111,33 @@ update msg model =
             ( { model | answer = answer }, Cmd.none )
 
         NextQuestion ->
+            let
+                correctCount =
+                    if model.answer == Correct then
+                        model.correctCount + 1
+                    else
+                        model.correctCount
+            in
             case model.nextQuestions of
                 [] ->
-                    ( { model | selectedIndexes = [], answer = Unanswered }, Cmd.none )
+                    ( { model
+                        | selectedIndexes = []
+                        , answer = Unanswered
+                        , correctCount = correctCount
+                      }
+                    , Cmd.none
+                    )
 
                 question :: nextQuestions ->
-                    ( { model | question = question, nextQuestions = nextQuestions, selectedIndexes = [], answer = Unanswered }, Cmd.none )
+                    ( { model
+                        | question = question
+                        , nextQuestions = nextQuestions
+                        , selectedIndexes = []
+                        , answer = Unanswered
+                        , correctCount = correctCount
+                      }
+                    , Cmd.none
+                    )
 
 
 
@@ -132,7 +155,7 @@ view model =
             , ( "position", "relative" )
             ]
         ]
-        [ viewProgressBar
+        [ viewProgressBar model.correctCount
         , h1 [] [ text "Translate this sentence" ]
         , viewSentence (List.map .text model.question.sentence)
         , div
@@ -171,8 +194,8 @@ view model =
         ]
 
 
-viewProgressBar : Html Msg
-viewProgressBar =
+viewProgressBar : Int -> Html Msg
+viewProgressBar correctCount =
     div
         [ style
             [ ( "display", "flex" )
@@ -194,9 +217,22 @@ viewProgressBar =
                 , ( "height", "5px" )
                 , ( "background", "#ccc" )
                 , ( "margin-left", "0.5em" )
+                , ( "position", "relative" )
                 ]
             ]
-            []
+            [ div
+                [ style
+                    [ ( "width", toString (correctCount * 100 // 10) ++ "%" )
+                    , ( "height", "12px" )
+                    , ( "background", "#00d800" )
+                    , ( "border-radius", "100px" )
+                    , ( "position", "absolute" )
+                    , ( "top", "-3px" )
+                    , ( "left", "-1px" )
+                    ]
+                ]
+                []
+            ]
         ]
 
 
