@@ -67,6 +67,7 @@ type Msg
     | SelectBlock Int
     | UnselectBlock Int
     | CheckAnswer
+    | NextQuestion
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -106,6 +107,14 @@ update msg model =
                         Incorrect (List.head model.question.solutions |> Maybe.withDefault "")
             in
             ( { model | answer = answer }, Cmd.none )
+
+        NextQuestion ->
+            case model.nextQuestions of
+                [] ->
+                    ( { model | selectedIndexes = [], answer = Unanswered }, Cmd.none )
+
+                question :: nextQuestions ->
+                    ( { model | question = question, nextQuestions = nextQuestions, selectedIndexes = [], answer = Unanswered }, Cmd.none )
 
 
 
@@ -155,7 +164,9 @@ view model =
             , viewResult model.answer
             , viewWordBlocks model.selectedIndexes (List.map .text model.question.words)
             ]
-        , viewButton ((not << List.isEmpty) model.selectedIndexes)
+        , viewButton
+            ((not << List.isEmpty) model.selectedIndexes)
+            (model.answer /= Unanswered)
         ]
 
 
@@ -340,8 +351,8 @@ viewResult answer =
                 ]
 
 
-viewButton : Bool -> Html Msg
-viewButton isActive =
+viewButton : Bool -> Bool -> Html Msg
+viewButton isActive isAnswered =
     div
         [ style
             [ ( "font-size", "20px" )
@@ -357,11 +368,20 @@ viewButton isActive =
             , ( "border-radius", "100px" )
             ]
         , if isActive then
-            onClick CheckAnswer
+            if isAnswered then
+                onClick NextQuestion
+            else
+                onClick CheckAnswer
           else
             onClick NoOp
         ]
-        [ text "CHECK" ]
+        [ text
+            (if isAnswered then
+                "CONTINUE"
+             else
+                "CHECK"
+            )
+        ]
 
 
 
