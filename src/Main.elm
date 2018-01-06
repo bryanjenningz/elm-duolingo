@@ -33,16 +33,29 @@ type alias Flags =
     }
 
 
+type Answer
+    = Unanswered
+    | Correct
+    | Incorrect String
+
+
 type alias Model =
     { question : BlockQuestion
     , nextQuestions : List BlockQuestion
     , selectedIndexes : List Int
+    , answer : Answer
     }
 
 
 init : Flags -> ( Model, Cmd Msg )
 init { question, nextQuestions } =
-    ( { question = question, nextQuestions = nextQuestions, selectedIndexes = [] }, Cmd.none )
+    ( { question = question
+      , nextQuestions = nextQuestions
+      , selectedIndexes = []
+      , answer = Unanswered
+      }
+    , Cmd.none
+    )
 
 
 
@@ -53,6 +66,7 @@ type Msg
     = NoOp
     | SelectBlock Int
     | UnselectBlock Int
+    | CheckAnswer
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -71,6 +85,27 @@ update msg model =
                         ++ List.drop (index + 1) model.selectedIndexes
             in
             ( { model | selectedIndexes = newSelectedIndexes }, Cmd.none )
+
+        CheckAnswer ->
+            let
+                userAnswer =
+                    List.map
+                        (\index ->
+                            List.drop index model.question.words
+                                |> List.head
+                                |> Maybe.map .text
+                                |> Maybe.withDefault "x"
+                        )
+                        model.selectedIndexes
+                        |> String.join ""
+
+                answer =
+                    if List.member userAnswer model.question.solutions then
+                        Correct
+                    else
+                        Incorrect (List.head model.question.solutions |> Maybe.withDefault "")
+            in
+            ( { model | answer = answer }, Cmd.none )
 
 
 
@@ -117,6 +152,7 @@ view model =
                         model.selectedIndexes
                     )
                 ]
+            , viewResult model.answer
             , viewWordBlocks model.selectedIndexes (List.map .text model.question.words)
             ]
         , viewButton ((not << List.isEmpty) model.selectedIndexes)
@@ -259,6 +295,51 @@ viewWordBlock isSelected index word =
             [ text word ]
 
 
+viewResult : Answer -> Html Msg
+viewResult answer =
+    case answer of
+        Unanswered ->
+            text ""
+
+        Correct ->
+            div
+                [ style
+                    [ ( "color", "green" )
+                    , ( "background", "lime" )
+                    , ( "width", "90%" )
+                    , ( "height", "100px" )
+                    , ( "position", "absolute" )
+                    , ( "top", "60%" )
+                    , ( "font-size", "22px" )
+                    , ( "display", "flex" )
+                    , ( "flex-direction", "column" )
+                    , ( "justify-content", "center" )
+                    , ( "align-items", "center" )
+                    ]
+                ]
+                [ text "You are correct." ]
+
+        Incorrect solution ->
+            div
+                [ style
+                    [ ( "color", "red" )
+                    , ( "background", "pink" )
+                    , ( "width", "90%" )
+                    , ( "height", "100px" )
+                    , ( "position", "absolute" )
+                    , ( "top", "60%" )
+                    , ( "font-size", "22px" )
+                    , ( "display", "flex" )
+                    , ( "flex-direction", "column" )
+                    , ( "justify-content", "center" )
+                    , ( "align-items", "center" )
+                    ]
+                ]
+                [ div [] [ text "Oops, that's not correct." ]
+                , div [ style [ ( "font-size", "18px" ) ] ] [ text solution ]
+                ]
+
+
 viewButton : Bool -> Html Msg
 viewButton isActive =
     div
@@ -275,6 +356,10 @@ viewButton isActive =
             , ( "padding", "15px" )
             , ( "border-radius", "100px" )
             ]
+        , if isActive then
+            onClick CheckAnswer
+          else
+            onClick NoOp
         ]
         [ text "CHECK" ]
 
