@@ -315,8 +315,8 @@ viewResult answer =
         Correct ->
             div
                 [ style
-                    [ ( "color", "green" )
-                    , ( "background", "lime" )
+                    [ ( "color", "#13ad13" )
+                    , ( "background", "#bdffa4" )
                     , ( "width", "90%" )
                     , ( "height", "100px" )
                     , ( "position", "absolute" )
@@ -333,8 +333,8 @@ viewResult answer =
         Incorrect solution ->
             div
                 [ style
-                    [ ( "color", "red" )
-                    , ( "background", "pink" )
+                    [ ( "color", "#ce0606" )
+                    , ( "background", "#fdd9e0" )
                     , ( "width", "90%" )
                     , ( "height", "100px" )
                     , ( "position", "absolute" )
