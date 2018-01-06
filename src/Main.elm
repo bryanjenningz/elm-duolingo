@@ -413,6 +413,7 @@ viewButton isActive isAnswered =
                 ( "background", "#ccc" )
             , ( "padding", "15px" )
             , ( "border-radius", "100px" )
+            , ( "cursor", "pointer" )
             ]
         , if isActive then
             if isAnswered then
