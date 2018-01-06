@@ -45,6 +45,7 @@ type alias Model =
     , selectedIndexes : List Int
     , answer : Answer
     , correctCount : Int
+    , exitModal : Bool
     }
 
 
@@ -55,6 +56,7 @@ init { question, nextQuestions } =
       , selectedIndexes = []
       , answer = Unanswered
       , correctCount = 1
+      , exitModal = False
       }
     , Cmd.none
     )
@@ -70,6 +72,8 @@ type Msg
     | UnselectBlock Int
     | CheckAnswer
     | NextQuestion
+    | ShowExitModal
+    | HideExitModal
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -136,6 +140,12 @@ update msg model =
                     , Cmd.none
                     )
 
+        ShowExitModal ->
+            ( { model | exitModal = True }, Cmd.none )
+
+        HideExitModal ->
+            ( { model | exitModal = False }, Cmd.none )
+
 
 
 ---- VIEW ----
@@ -188,6 +198,7 @@ view model =
         , viewButton
             ((not << List.isEmpty) model.selectedIndexes)
             (model.answer /= Unanswered)
+        , viewExitModal model.exitModal
         ]
 
 
@@ -204,7 +215,9 @@ viewProgressBar correctCount =
                 [ ( "flex", "1" )
                 , ( "font-size", "40px" )
                 , ( "color", "#ccc" )
+                , ( "cursor", "pointer" )
                 ]
+            , onClick ShowExitModal
             ]
             [ text "✕" ]
         , div
@@ -416,6 +429,52 @@ viewButton isActive isAnswered =
                 "CHECK"
             )
         ]
+
+
+viewExitModal : Bool -> Html Msg
+viewExitModal isShown =
+    if isShown then
+        div []
+            [ div
+                [ style
+                    [ ( "background", "rgba(0, 0, 0, 0.8)" )
+                    , ( "position", "absolute" )
+                    , ( "top", "0" )
+                    , ( "left", "0" )
+                    , ( "right", "0" )
+                    , ( "bottom", "0" )
+                    ]
+                , onClick HideExitModal
+                ]
+                []
+            , div
+                [ style
+                    [ ( "background", "white" )
+                    , ( "position", "absolute" )
+                    , ( "top", "30%" )
+                    , ( "width", "90%" )
+                    ]
+                ]
+                [ h2 [] [ text "Are you sure about that?" ]
+                , div [] [ text "All progress in this lesson will be lost." ]
+                , div
+                    [ style
+                        [ ( "display", "flex" )
+                        , ( "justify-content", "flex-end" )
+                        , ( "margin", "20px" )
+                        ]
+                    ]
+                    [ div [ onClick HideExitModal, style [ ( "cursor", "pointer" ) ] ] [ text "CANCEL" ]
+                    , div
+                        [ style
+                            [ ( "margin", "0 30px" ), ( "cursor", "pointer" ) ]
+                        ]
+                        [ text "QUIT" ]
+                    ]
+                ]
+            ]
+    else
+        div [] []
 
 
 
