@@ -23,22 +23,26 @@ type alias TextSound =
 type alias BlockQuestion =
     { sentence : List TextTranslation
     , words : List TextSound
+    , solutions : List String
     }
 
 
 type alias Flags =
-    { blockQuestions : List BlockQuestion }
+    { question : BlockQuestion
+    , nextQuestions : List BlockQuestion
+    }
 
 
 type alias Model =
-    { blockQuestions : List BlockQuestion
+    { question : BlockQuestion
+    , nextQuestions : List BlockQuestion
     , selectedIndexes : List Int
     }
 
 
 init : Flags -> ( Model, Cmd Msg )
-init { blockQuestions } =
-    ( { blockQuestions = blockQuestions, selectedIndexes = [] }, Cmd.none )
+init { question, nextQuestions } =
+    ( { question = question, nextQuestions = nextQuestions, selectedIndexes = [] }, Cmd.none )
 
 
 
@@ -75,10 +79,6 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    let
-        maybeQuestion =
-            List.head model.blockQuestions
-    in
     div
         [ style
             [ ( "max-width", "500px" )
@@ -89,41 +89,36 @@ view model =
         ]
         [ viewProgressBar
         , h1 [] [ text "Translate this sentence" ]
-        , viewSentence
-        , case maybeQuestion of
-            Nothing ->
-                div [] [ text "Make sure there's at least 1 question..." ]
-
-            Just question ->
-                div
+        , viewSentence (List.map .text model.question.sentence)
+        , div
+            [ style
+                [ ( "display", "flex" )
+                , ( "flex-direction", "column" )
+                , ( "height", "60%" )
+                ]
+            ]
+            [ div [ style [ ( "height", "50%" ), ( "position", "relative" ) ] ]
+                [ div
                     [ style
-                        [ ( "display", "flex" )
-                        , ( "flex-direction", "column" )
-                        , ( "height", "60%" )
+                        [ ( "position", "absolute" )
+                        , ( "width", "100%" )
+                        , ( "height", "100%" )
+                        , ( "z-index", "-1" )
                         ]
                     ]
-                    [ div [ style [ ( "height", "50%" ), ( "position", "relative" ) ] ]
-                        [ div
-                            [ style
-                                [ ( "position", "absolute" )
-                                , ( "width", "100%" )
-                                , ( "height", "100%" )
-                                , ( "z-index", "-1" )
-                                ]
-                            ]
-                            [ viewLines ]
-                        , viewSelectedWordBlocks
-                            (List.filterMap
-                                (\index ->
-                                    List.drop index question.words
-                                        |> List.head
-                                        |> Maybe.map .text
-                                )
-                                model.selectedIndexes
-                            )
-                        ]
-                    , viewWordBlocks model.selectedIndexes (List.map .text question.words)
-                    ]
+                    [ viewLines ]
+                , viewSelectedWordBlocks
+                    (List.filterMap
+                        (\index ->
+                            List.drop index model.question.words
+                                |> List.head
+                                |> Maybe.map .text
+                        )
+                        model.selectedIndexes
+                    )
+                ]
+            , viewWordBlocks model.selectedIndexes (List.map .text model.question.words)
+            ]
         , viewButton ((not << List.isEmpty) model.selectedIndexes)
         ]
 
@@ -157,13 +152,8 @@ viewProgressBar =
         ]
 
 
-sentence : List String
-sentence =
-    String.split " " "I stuck on a stamp"
-
-
-viewSentence : Html Msg
-viewSentence =
+viewSentence : List String -> Html Msg
+viewSentence sentence =
     div [ style [ ( "margin", "15px" ) ] ] (List.map viewWord sentence)
 
 
