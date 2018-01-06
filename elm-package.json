@@ -2,7 +2,7 @@
     "version": "1.0.0",
     "summary": "Duolingo progressive web app",
     "homepage": "https://bryanjenningz.github.io/elm-duolingo/",
-    "repository": "https://github.com/bryanjenningz/elm-duolingo/",
+    "repository": "https://github.com/bryanjenningz/elm-duolingo.git",
     "license": "BSD3",
     "source-directories": [
         "src"
