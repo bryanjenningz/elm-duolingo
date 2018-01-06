@@ -107,23 +107,21 @@ update msg model =
                         Correct
                     else
                         Incorrect (List.head model.question.solutions |> Maybe.withDefault "")
-            in
-            ( { model | answer = answer }, Cmd.none )
 
-        NextQuestion ->
-            let
                 correctCount =
-                    if model.answer == Correct then
+                    if answer == Correct then
                         model.correctCount + 1
                     else
                         model.correctCount
             in
+            ( { model | answer = answer, correctCount = correctCount }, Cmd.none )
+
+        NextQuestion ->
             case model.nextQuestions of
                 [] ->
                     ( { model
                         | selectedIndexes = []
                         , answer = Unanswered
-                        , correctCount = correctCount
                       }
                     , Cmd.none
                     )
@@ -134,7 +132,6 @@ update msg model =
                         , nextQuestions = nextQuestions
                         , selectedIndexes = []
                         , answer = Unanswered
-                        , correctCount = correctCount
                       }
                     , Cmd.none
                     )
